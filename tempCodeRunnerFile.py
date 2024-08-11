@@ -20,7 +20,7 @@ with open('scaler.pkl', 'rb') as file:
 
 
 ## streamlit app
-st.title('Customer Churn Prediction')
+st.title('Customer Churn PRediction')
 
 # User input
 geography = st.selectbox('Geography', onehot_encoder_geo.categories_[0])
@@ -49,17 +49,14 @@ input_data = pd.DataFrame({
 
 # One-hot encode 'Geography'
 geo_encoded = onehot_encoder_geo.transform([[geography]]).toarray()
-
-# If `get_feature_names_out` is not available, use the code below
-# feature_names = onehot_encoder_geo.get_feature_names(['Geography'])
-feature_names = [f"Geography_{cat}" for cat in onehot_encoder_geo.categories_[0]]
-geo_encoded_df = pd.DataFrame(geo_encoded, columns=feature_names)
+geo_encoded_df = pd.DataFrame(geo_encoded, columns=onehot_encoder_geo.get_feature_names_out(['Geography']))
 
 # Combine one-hot encoded columns with input data
 input_data = pd.concat([input_data.reset_index(drop=True), geo_encoded_df], axis=1)
 
 # Scale the input data
 input_data_scaled = scaler.transform(input_data)
+
 
 # Predict churn
 prediction = model.predict(input_data_scaled)
